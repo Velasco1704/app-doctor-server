@@ -42,7 +42,14 @@ export const createDoctor = async (req: Request, res: Response) => {
     };
     return await prisma.doctor
       .create({ data: newDoctor })
-      .then((response) => res.json(response))
+      .then(async (response) => {
+        const tokenSession = await tokenSign(response);
+        return res.json({
+          success: "SUCCESS",
+          data: response,
+          token: tokenSession,
+        });
+      })
       .catch(() =>
         res.status(400).json({ error: "Some parameter does not match" })
       );
@@ -50,6 +57,22 @@ export const createDoctor = async (req: Request, res: Response) => {
     console.log(error);
     res.sendStatus(400);
   }
+  // try {
+  //   const plainToHash = await hash(req.body.password, 5);
+  //   const newDoctor = await {
+  //     ...req.body,
+  //     password: plainToHash,
+  //   };
+  //   return await prisma.doctor
+  //     .create({ data: newDoctor })
+  //     .then((response) => res.json(response))
+  //     .catch(() =>
+  //       res.status(400).json({ error: "Some parameter does not match" })
+  //     );
+  // } catch (error) {
+  //   console.log(error);
+  //   res.sendStatus(400);
+  // }
 };
 
 export const updateDoctor = async (req: Request, res: Response) => {
