@@ -103,6 +103,9 @@ export const login = async (req: Request, res: Response) => {
   try {
     const doctorFounded = await prisma.doctor.findFirst({
       where: { email: req.body.email },
+      include: {
+        patients: true,
+      },
     });
     if (!doctorFounded)
       return res.status(404).json({ error: "Email incorrect" });
